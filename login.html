@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — Lapor Pak RT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#FF6B57',
+              'coral-hover': '#E05643',
+              'coral-light': '#FFF0ED',
+              teal: '#4EBA9F',
+              'teal-dark': '#3DA087',
+              'teal-light': '#EBF8F5',
+              amber: '#FBBF24',
+              'amber-dark': '#B45309',
+              'amber-light': '#FEF9C3',
+              slate: '#1E293B',
+              muted: '#64748B',
+              canvas: '#D5DDE5'
+            }
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          boxShadow: {
+            'glow-coral': '0 8px 24px -4px rgba(255, 107, 87, 0.35)',
+            'glow-teal': '0 8px 24px -4px rgba(78, 186, 159, 0.35)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+  </style>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-brand-canvas p-4 text-brand-slate">
+
+  <div class="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-[36px] border border-slate-200/90 bg-white shadow-2xl lg:grid-cols-2">
+    <!-- Kolom Kiri: Branding Hero -->
+    <div class="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-sky-500 via-sky-600 to-indigo-600 p-9 text-white lg:flex">
+      <div class="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border-[12px] border-white/15"></div>
+      <div class="pointer-events-none absolute -bottom-20 -left-14 h-64 w-64 rounded-full border-[10px] border-white/10"></div>
+
+      <div>
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/20 text-white backdrop-blur-md">
+            <i data-lucide="layout-grid" class="h-4 w-4 text-white" stroke-width="2.5"></i>
+          </div>
+          <span class="text-xl font-black tracking-tight text-white">Lapor Pak RT</span>
+        </div>
+        <h1 class="mt-10 text-3xl font-extrabold leading-snug tracking-tight">
+          Layanan &amp; Pengaduan RT/RW Digital
+        </h1>
+        <p class="mt-3 text-xs font-medium leading-relaxed text-sky-100 opacity-95">
+          Sampaikan aduan lingkungan lengkap dengan foto bukti, pantau status tiket Anda dari
+          <b>Diajukan</b> sampai <b>Selesai</b>, dan nikmati pengumuman resmi yang tidak lagi tenggelam oleh grup chat.
+        </p>
+      </div>
+
+      <div class="mt-10 flex items-center gap-3">
+        <span class="rounded-full bg-white/20 px-3.5 py-1.5 text-[11px] font-bold backdrop-blur-md">RT 05 / RW 03</span>
+        <span class="rounded-full bg-white px-3.5 py-1.5 text-[11px] font-bold text-sky-600 shadow-md">100% Digital</span>
+      </div>
+    </div>
+
+    <!-- Kolom Kanan: Form Login -->
+    <div class="p-8 sm:p-10">
+      <div class="mb-8 flex items-center gap-2.5 lg:hidden">
+        <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm">
+          <i data-lucide="layout-grid" class="h-4 w-4 text-sky-400" stroke-width="2.5"></i>
+        </div>
+        <span class="text-xl font-black tracking-tight text-slate-900">Lapor Pak RT</span>
+      </div>
+
+      <h2 class="text-xl font-extrabold text-slate-900">Masuk Akun</h2>
+      <p class="mt-1 text-xs font-medium text-slate-400">Gunakan email dan kata sandi terdaftar Anda.</p>
+
+      <form id="form-login" class="mt-6 space-y-4">
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold text-slate-700">Email</label>
+          <div class="relative">
+            <input id="email" type="email" required placeholder="nama@email.com"
+              class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 pr-10 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+            <i data-lucide="mail" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" stroke-width="2.4"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold text-slate-700">Kata Sandi</label>
+          <div class="relative">
+            <input id="password" type="password" required placeholder="••••••••"
+              class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 pr-10 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+            <i data-lucide="lock" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" stroke-width="2.4"></i>
+          </div>
+        </div>
+
+        <div id="login-error" class="hidden rounded-2xl bg-rose-50 px-4 py-2.5 text-[11px] font-semibold text-rose-600"></div>
+
+        <button type="submit" id="btn-submit"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-500 px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-sky-200 transition-all hover:bg-sky-600 active:scale-95 disabled:opacity-60">
+          <i data-lucide="log-in" class="h-4 w-4" stroke-width="2.5"></i>
+          <span>Masuk</span>
+        </button>
+      </form>
+
+      <p class="mt-4 text-center text-[11px] font-medium text-slate-400">
+        Belum punya akun? <a href="register.html" class="font-bold text-sky-600 hover:underline">Daftar di sini</a>
+      </p>
+
+      <!-- Quick Fill Demo -->
+      <div class="mt-8 rounded-3xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+        <p class="mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Akun demo — klik untuk isi cepat</p>
+        <div class="space-y-1.5">
+          <button type="button" data-demo-email="warga@laporrt.id" data-demo-pass="warga123"
+            class="demo-chip flex w-full items-center justify-between rounded-2xl bg-white px-3 py-2 text-[11px] font-semibold text-brand-slate shadow-sm transition-all hover:bg-slate-50">
+            <span class="font-bold">Warga</span>
+            <span class="text-brand-muted">warga@laporrt.id</span>
+          </button>
+          <button type="button" data-demo-email="rt@laporrt.id" data-demo-pass="rt123456"
+            class="demo-chip flex w-full items-center justify-between rounded-2xl bg-white px-3 py-2 text-[11px] font-semibold text-brand-slate shadow-sm transition-all hover:bg-slate-50">
+            <span class="font-bold">Pak RT</span>
+            <span class="text-brand-muted">rt@laporrt.id</span>
+          </button>
+          <button type="button" data-demo-email="admin@laporrt.id" data-demo-pass="admin123"
+            class="demo-chip flex w-full items-center justify-between rounded-2xl bg-white px-3 py-2 text-[11px] font-semibold text-brand-slate shadow-sm transition-all hover:bg-slate-50">
+            <span class="font-bold">Admin</span>
+            <span class="text-brand-muted">admin@laporrt.id</span>
+          </button>
+        </div>
+        <p class="mt-2.5 text-[10px] font-medium leading-relaxed text-slate-400">
+          Data tersimpan di browser Anda (localStorage). Tidak perlu backend / server.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (window.RT.sessionUser()) {
+      window.location.replace('index.html');
+    }
+
+    const form = document.getElementById('form-login');
+    const errBox = document.getElementById('login-error');
+    const emailEl = document.getElementById('email');
+    const passEl = document.getElementById('password');
+
+    // Quick fill
+    document.querySelectorAll('.demo-chip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        emailEl.value = btn.getAttribute('data-demo-email');
+        passEl.value = btn.getAttribute('data-demo-pass');
+        errBox.classList.add('hidden');
+        window.UI.toast('Akun demo diisi otomatis', 'info');
+      });
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errBox.classList.add('hidden');
+      try {
+        const u = window.RT.login(emailEl.value.trim(), passEl.value);
+        window.UI.toast('Selamat datang, ' + u.nama_lengkap.split(' ')[0] + '!', 'success');
+        setTimeout(function () { window.location.replace('index.html'); }, 300);
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.classList.remove('hidden');
+      }
+    });
+
+    window.UI.icons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Lapor Pak RT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#FF6B57',
+              'coral-hover': '#E05643',
+              'coral-light': '#FFF0ED',
+              teal: '#4EBA9F',
+              'teal-dark': '#3DA087',
+              'teal-light': '#EBF8F5',
+              amber: '#FBBF24',
+              'amber-dark': '#B45309',
+              'amber-light': '#FEF9C3',
+              slate: '#1E293B',
+              muted: '#64748B',
+              canvas: '#D5DDE5'
+            }
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          boxShadow: {
+            'glow-coral': '0 8px 24px -4px rgba(255, 107, 87, 0.35)',
+            'glow-teal': '0 8px 24px -4px rgba(78, 186, 159, 0.35)',
+            'tactile': '0 12px 36px -8px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @view-transition { navigation: auto; }
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    #app:not([data-ready="true"]) { opacity: 0; visibility: hidden; }
+    #app[data-ready="true"] { opacity: 1; visibility: visible; transition: opacity 0.16s ease-out; }
+  </style>
+</head>
+<body class="bg-white text-brand-slate">
+
+  <div id="app">
+    <!-- Top Greeting Area (matching reference image "Hello, Margaret") -->
+    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <div>
+        <h1 class="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+          Halo, Warga RT 05! 👋
+        </h1>
+        <p id="hero-subtitle" class="mt-1 text-xs font-medium text-slate-400 sm:text-sm">
+          Pantau seluruh pengaduan dan keluhan lingkungan secara terbuka dan terpusat.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2 rounded-2xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm">
+          <span class="flex h-5 w-5 items-center justify-center rounded-full bg-sky-100 text-sky-600">
+            <i data-lucide="users" class="h-3 w-3" stroke-width="2.5"></i>
+          </span>
+          <span><span id="stat-warga">0</span> <span class="font-medium text-slate-400">warga</span></span>
+        </div>
+
+        <div class="flex items-center gap-2 rounded-2xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm">
+          <span class="flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+            <i data-lucide="bell" class="h-3 w-3" stroke-width="2.5"></i>
+          </span>
+          <span><span id="stat-pengumuman">0</span> <span class="font-medium text-slate-400">edaran</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bento KPI 4 Kotak (matching Finished 18, Tracked 31h, Efficiency 93% from reference image) -->
+    <div class="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+      <a href="reports.html" class="group flex min-h-[110px] items-center justify-between rounded-3xl border border-slate-100/90 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+        <div class="flex items-center gap-3.5">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-500 shadow-inner">
+            <i data-lucide="file-text" class="h-5 w-5" stroke-width="2"></i>
+          </span>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400">Total Aduan</p>
+            <p id="kpi-total" class="text-2xl font-black tracking-tight text-slate-900">0</p>
+          </div>
+        </div>
+        <span class="hidden rounded-full bg-slate-50 px-2 py-1 text-[10px] font-bold text-slate-400 sm:inline-block">Semua</span>
+      </a>
+
+      <a href="reports.html?status=pending" class="group flex min-h-[110px] items-center justify-between rounded-3xl border border-slate-100/90 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+        <div class="flex items-center gap-3.5">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-500 shadow-inner">
+            <i data-lucide="clock" class="h-5 w-5" stroke-width="2"></i>
+          </span>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400">Masih Diajukan</p>
+            <p id="kpi-pending" class="text-2xl font-black tracking-tight text-slate-900">0</p>
+          </div>
+        </div>
+        <span class="hidden rounded-full bg-sky-50 px-2 py-1 text-[10px] font-bold text-sky-600 sm:inline-block">Menunggu</span>
+      </a>
+
+      <a href="reports.html?status=diproses" class="group flex min-h-[110px] items-center justify-between rounded-3xl border border-slate-100/90 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+        <div class="flex items-center gap-3.5">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 shadow-inner">
+            <i data-lucide="arrow-up-right" class="h-5 w-5" stroke-width="2"></i>
+          </span>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400">Dalam Proses</p>
+            <p id="kpi-diproses" class="text-2xl font-black tracking-tight text-slate-900">0</p>
+          </div>
+        </div>
+        <span class="hidden rounded-full bg-indigo-50 px-2 py-1 text-[10px] font-bold text-indigo-600 sm:inline-block">Diproses</span>
+      </a>
+
+      <a href="reports.html?status=selesai" class="group flex min-h-[110px] items-center justify-between rounded-3xl border border-slate-100/90 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+        <div class="flex items-center gap-3.5">
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500 shadow-inner">
+            <i data-lucide="check-circle-2" class="h-5 w-5" stroke-width="2"></i>
+          </span>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400">Selesai Ditangani</p>
+            <p id="kpi-selesai" class="text-2xl font-black tracking-tight text-slate-900">0</p>
+          </div>
+        </div>
+        <span class="hidden rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-600 sm:inline-block">Tuntas</span>
+      </a>
+    </div>
+
+    <!-- Dua Kolom: Pengaduan Terbaru (Current Tasks) + Papan Pengumuman (Activity) -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <!-- Kolom Pengaduan Terbaru (lg:col-span-8) -->
+      <section class="rounded-3xl border border-slate-100/90 bg-white p-5 shadow-sm lg:col-span-8">
+        <div class="mb-4 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm font-extrabold text-slate-900 sm:text-base">Pengaduan Terbaru</h2>
+            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">Terkini</span>
+          </div>
+          <a href="reports.html" class="text-xs font-bold text-sky-600 transition-colors hover:text-sky-700">Lihat Semua</a>
+        </div>
+        <div id="recent-reports" class="space-y-3"></div>
+      </section>
+
+      <!-- Kolom Pengumuman Ringkas (lg:col-span-4) -->
+      <section class="rounded-3xl border border-slate-100/90 bg-white p-5 shadow-sm lg:col-span-4">
+        <div class="mb-4 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm font-extrabold text-slate-900 sm:text-base">Papan Pengumuman</h2>
+            <span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-600">Edaran</span>
+          </div>
+          <a href="announcements.html" class="text-xs font-bold text-slate-400 transition-colors hover:text-sky-600">Lihat Semua</a>
+        </div>
+        <div id="recent-announcements" class="space-y-3"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    const user = window.Layout.init();
+    if (user) {
+      const isOfficer = window.RT.isOfficerRole(user.role);
+      const sub = document.getElementById('hero-subtitle');
+      if (sub) {
+        sub.textContent = isOfficer
+          ? 'Pantau seluruh pengaduan RT 05 / RW 03 dan tanggapi secepatnya.'
+          : 'Sampaikan keluhan Anda, pantau statusnya, dan nikmati lingkungan yang lebih tertata.';
+      }
+
+      const st = window.RT.stats();
+      if (st) {
+        document.getElementById('stat-warga').textContent = st.total_warga;
+        document.getElementById('stat-pengumuman').textContent = st.total_pengumuman;
+        document.getElementById('kpi-total').textContent = st.total_laporan;
+        document.getElementById('kpi-pending').textContent = st.pending;
+        document.getElementById('kpi-diproses').textContent = st.diproses;
+        document.getElementById('kpi-selesai').textContent = st.selesai;
+
+        // Render recent reports
+        const repBox = document.getElementById('recent-reports');
+        if (st.recent.length === 0) {
+          repBox.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-3xl border border-slate-100 py-10 text-center">' +
+              '<div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">' +
+                '<i data-lucide="inbox" class="h-6 w-6"></i>' +
+              '</div>' +
+              '<p class="text-xs font-bold text-slate-800">Belum ada pengaduan masuk</p>' +
+              '<p class="mt-1 text-[11px] font-medium text-slate-400">' +
+                (isOfficer ? 'Warga akan segera melaporkan kendala di lingkungan.' : 'Laporkan kendala pertama Anda lewat tombol Lapor Sekarang!') +
+              '</p>' +
+            '</div>';
+        } else {
+          repBox.innerHTML = st.recent.map(function (r) {
+            return (
+              '<a href="reports.html?id=' + r.id_laporan + '" class="group flex items-center justify-between gap-3 rounded-2xl border border-slate-100/90 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50/80 hover:shadow sm:p-4">' +
+                '<div class="flex min-w-0 items-center gap-3.5">' +
+                  '<div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-xs font-extrabold text-sky-600">' +
+                    window.UI.esc(r.kode_tiket.replace('LPR-', '#')) +
+                  '</div>' +
+                  '<div class="min-w-0">' +
+                    '<p class="truncate text-xs font-bold text-slate-900 sm:text-sm">' + window.UI.esc(r.judul_laporan) + '</p>' +
+                    '<p class="truncate text-[11px] font-medium text-slate-400">' +
+                      window.UI.esc(r.nama_kategori) + ' · ' + (isOfficer ? window.UI.esc(r.nama_pelapor) : window.UI.fmtDate(r.created_at.slice(0, 10))) +
+                    '</p>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="ml-2 shrink-0">' + window.UI.statusBadge(r.status) + '</div>' +
+              '</a>'
+            );
+          }).join('');
+        }
+
+        // Render recent announcements
+        const annBox = document.getElementById('recent-announcements');
+        const annList = window.RT.listAnnouncements(3);
+        const prioDots = { darurat: 'bg-rose-500', penting: 'bg-amber-500', normal: 'bg-sky-500' };
+
+        if (annList.length === 0) {
+          annBox.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-3xl border border-slate-100 py-10 text-center">' +
+              '<p class="text-xs font-bold text-slate-800">Belum ada pengumuman</p>' +
+              '<p class="mt-1 text-[11px] font-medium text-slate-400">Edaran resmi akan tampil di sini.</p>' +
+            '</div>';
+        } else {
+          annBox.innerHTML = annList.map(function (a) {
+            const dot = prioDots[a.prioritas] || prioDots.normal;
+            return (
+              '<a href="announcements.html" class="flex items-start gap-3 rounded-2xl border border-slate-100/90 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50/80 hover:shadow">' +
+                '<span class="mt-1.5 h-2 w-2 shrink-0 rounded-full ' + dot + '"></span>' +
+                '<div class="min-w-0 flex-1">' +
+                  '<div class="flex items-center gap-2">' +
+                    '<p class="truncate text-xs font-bold text-slate-900">' + window.UI.esc(a.judul) + '</p>' +
+                    window.UI.priorityBadge(a.prioritas) +
+                  '</div>' +
+                  '<p class="mt-1 line-clamp-2 text-[11px] font-medium leading-relaxed text-slate-400">' + window.UI.esc(a.isi) + '</p>' +
+                '</div>' +
+              '</a>'
+            );
+          }).join('');
+        }
+
+        window.UI.icons();
+      }
+    }
+  </script>
+</body>
+</html>

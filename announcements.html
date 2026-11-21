@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman — Lapor Pak RT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#FF6B57',
+              'coral-hover': '#E05643',
+              'coral-light': '#FFF0ED',
+              teal: '#4EBA9F',
+              'teal-dark': '#3DA087',
+              'teal-light': '#EBF8F5',
+              amber: '#FBBF24',
+              'amber-dark': '#B45309',
+              'amber-light': '#FEF9C3',
+              slate: '#1E293B',
+              muted: '#64748B',
+              canvas: '#D5DDE5'
+            }
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          boxShadow: {
+            'glow-coral': '0 8px 24px -4px rgba(255, 107, 87, 0.35)',
+            'glow-teal': '0 8px 24px -4px rgba(78, 186, 159, 0.35)',
+            'tactile': '0 12px 36px -8px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @view-transition { navigation: auto; }
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    #app:not([data-ready="true"]) { opacity: 0; visibility: hidden; }
+    #app[data-ready="true"] { opacity: 1; visibility: visible; transition: opacity 0.16s ease-out; }
+  </style>
+</head>
+<body class="bg-white text-brand-slate">
+
+  <div id="app">
+    <!-- Header Halaman -->
+    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <div>
+        <h1 class="text-xl font-extrabold tracking-tight text-brand-slate sm:text-2xl">Papan Pengumuman Digital</h1>
+        <p class="text-xs font-medium text-brand-muted">Edaran resmi dari pengurus RT — tidak akan tertimbun percakapan grup lagi.</p>
+      </div>
+      <div id="officer-actions" class="hidden">
+        <button id="btn-create-ann" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-sky-500 px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-sky-200 transition-all hover:bg-sky-600 active:scale-95">
+          <i data-lucide="plus" class="h-4 w-4" stroke-width="2.6"></i>
+          <span>Publikasikan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Banner Edaran Paling Baru (Pinned) -->
+    <div id="pinned-banner"></div>
+
+    <!-- Daftar Pengumuman Lainnya -->
+    <div>
+      <h2 id="list-title" class="mb-4 text-sm font-extrabold text-brand-slate sm:text-base">Daftar Edaran Warga</h2>
+      <div id="ann-grid" class="grid grid-cols-1 gap-4 lg:grid-cols-2"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    const user = window.Layout.init();
+    if (user) {
+      const isOfficer = window.RT.isOfficerRole(user.role);
+      if (isOfficer) {
+        document.getElementById('officer-actions').classList.remove('hidden');
+      }
+
+      function render() {
+        const list = window.RT.listAnnouncements();
+        const pinnedBox = document.getElementById('pinned-banner');
+        const grid = document.getElementById('ann-grid');
+        const titleEl = document.getElementById('list-title');
+
+        if (list.length === 0) {
+          pinnedBox.innerHTML = '';
+          titleEl.textContent = 'Belum Ada Pengumuman';
+          grid.className = 'grid grid-cols-1';
+          grid.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-3xl border border-slate-100 py-12 text-center">' +
+              '<div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">' +
+                '<i data-lucide="bell" class="h-6 w-6"></i>' +
+              '</div>' +
+              '<p class="text-xs font-bold text-brand-slate">Belum ada pengumuman terbit</p>' +
+              '<p class="mt-1 text-[11px] font-medium text-brand-muted">' +
+                (isOfficer ? 'Publikasikan edaran pertama lewat tombol di atas.' : 'Pengurus RT belum membagikan pengumuman baru.') +
+              '</p>' +
+            '</div>';
+          window.UI.icons();
+          return;
+        }
+
+        // Pinned banner = item pertama
+        const newest = list[0];
+        pinnedBox.innerHTML =
+          '<section class="relative overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-sky-50/50 p-6 sm:p-8 text-slate-900 shadow-sm">' +
+            '<div class="flex items-center gap-2.5">' +
+              '<span class="flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-sky-600">' +
+                '<i data-lucide="megaphone" class="h-3.5 w-3.5"></i>' +
+              '</span>' +
+              window.UI.priorityBadge(newest.prioritas) +
+              (newest.prioritas === 'darurat' ? '<span class="rounded-full bg-rose-100 text-rose-700 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest">Terbaru</span>' : '') +
+            '</div>' +
+            '<h2 class="mt-3 text-lg font-extrabold leading-snug tracking-tight text-slate-900 sm:text-xl">' + window.UI.esc(newest.judul) + '</h2>' +
+            '<p class="mt-2 max-w-2xl whitespace-pre-line text-xs font-medium leading-relaxed text-slate-600 sm:text-sm">' + window.UI.esc(newest.isi) + '</p>' +
+            '<div class="mt-4 flex items-center justify-between text-[10px] font-semibold text-slate-400">' +
+              '<span>oleh ' + window.UI.esc(newest.nama_petugas) + ' · ' + window.UI.fmtDateTime(newest.tgl_publikasi) + '</span>' +
+              (isOfficer ? (
+                '<span class="flex gap-2">' +
+                  '<button data-edit="' + newest.id_pengumuman + '" class="rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-slate-700 hover:bg-slate-50">Ubah</button>' +
+                  '<button data-delete="' + newest.id_pengumuman + '" class="rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-1 text-rose-600 hover:bg-rose-100">Hapus</button>' +
+                '</span>'
+              ) : '') +
+            '</div>' +
+          '</section>';
+
+        // Sisanya masuk grid
+        const others = list.slice(1);
+        titleEl.textContent = list.length + ' Edaran Terbit';
+
+        const prioTones = { normal: 'bg-sky-50 text-sky-600 border border-sky-100', penting: 'bg-amber-50 text-amber-600 border border-amber-100', darurat: 'bg-rose-50 text-rose-600 border border-rose-100' };
+        const prioIcons = { normal: 'info', penting: 'alert-triangle', darurat: 'siren' };
+
+        grid.className = 'grid grid-cols-1 gap-4 lg:grid-cols-2';
+        grid.innerHTML = others.map(function (a) {
+          const tone = prioTones[a.prioritas] || prioTones.normal;
+          const icon = prioIcons[a.prioritas] || 'bell';
+          return (
+            '<div class="group flex flex-col justify-between rounded-3xl border border-slate-100/90 bg-white p-5 shadow-sm transition-all hover:shadow-md">' +
+              '<div class="flex items-start gap-3.5">' +
+                '<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ' + tone + '">' +
+                  '<i data-lucide="' + icon + '" class="h-4.5 w-4.5"></i>' +
+                '</span>' +
+                '<div class="min-w-0 flex-1">' +
+                  '<div class="flex flex-wrap items-center gap-2">' +
+                    '<h3 class="text-sm font-extrabold text-slate-900">' + window.UI.esc(a.judul) + '</h3>' +
+                    window.UI.priorityBadge(a.prioritas) +
+                  '</div>' +
+                  '<p class="mt-1.5 whitespace-pre-line text-[11px] font-medium leading-relaxed text-slate-400">' + window.UI.esc(a.isi) + '</p>' +
+                '</div>' +
+              '</div>' +
+              '<div class="mt-4 flex items-center justify-between border-t border-slate-50 pt-3">' +
+                '<p class="text-[10px] font-semibold text-slate-400">' + window.UI.esc(a.nama_petugas) + ' · ' + window.UI.fmtDateTime(a.tgl_publikasi) + '</p>' +
+                (isOfficer ? (
+                  '<span class="flex gap-1">' +
+                    '<button data-edit="' + a.id_pengumuman + '" aria-label="Ubah" class="rounded-xl p-1.5 text-slate-300 transition-colors hover:text-slate-700">' +
+                      '<i data-lucide="pencil" class="h-3.5 w-3.5"></i>' +
+                    '</button>' +
+                    '<button data-delete="' + a.id_pengumuman + '" aria-label="Hapus" class="rounded-xl p-1.5 text-slate-300 transition-colors hover:text-rose-600">' +
+                      '<i data-lucide="trash-2" class="h-3.5 w-3.5"></i>' +
+                    '</button>' +
+                  '</span>'
+                ) : '') +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        // Bind aksi ubah / hapus
+        document.querySelectorAll('[data-edit]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            openFormModal(btn.getAttribute('data-edit'));
+          });
+        });
+        document.querySelectorAll('[data-delete]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const id = btn.getAttribute('data-delete');
+            if (confirm('Hapus pengumuman ini dari edaran warga?')) {
+              window.RT.deleteAnnouncement(id);
+              window.UI.toast('Pengumuman berhasil dihapus', 'info');
+              render();
+            }
+          });
+        });
+
+        window.UI.icons();
+      }
+
+      function openFormModal(id) {
+        let existing = null;
+        if (id) {
+          existing = window.RT.listAnnouncements().find(function (x) { return x.id_pengumuman === Number(id); });
+        }
+        const prioritas = existing ? existing.prioritas : 'normal';
+
+        const bodyHTML =
+          '<form id="form-ann" class="space-y-3.5">' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Judul Edaran</label>' +
+              '<input name="judul" required value="' + window.UI.esc(existing ? existing.judul : '') + '" placeholder="mis. Kerja Bakti Mingguan" class="' + window.UI.INPUT_CLS + '">' +
+            '</div>' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Isi Pengumuman</label>' +
+              '<textarea name="isi" required rows="4" placeholder="Tulis isi pengumuman lengkap…" class="' + window.UI.INPUT_CLS + '">' + window.UI.esc(existing ? existing.isi : '') + '</textarea>' +
+            '</div>' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Tingkat Urgensi</label>' +
+              '<div id="prio-group" class="flex gap-2">' +
+                ['normal', 'penting', 'darurat'].map(function (p) {
+                  const labels = { normal: 'Normal', penting: 'Penting', darurat: 'Darurat' };
+                  const active = prioritas === p;
+                  return (
+                    '<button type="button" data-prio="' + p + '" class="flex-1 rounded-full px-4 py-2 text-[11px] font-bold transition-all active:scale-95 ' +
+                      (active ? 'bg-brand-coral text-white shadow-md' : 'border border-slate-200 text-brand-muted hover:text-brand-slate') + '">' +
+                      labels[p] +
+                    '</button>'
+                  );
+                }).join('') +
+              '</div>' +
+              '<input type="hidden" name="prioritas" value="' + prioritas + '">' +
+            '</div>' +
+            '<div class="flex gap-2 pt-2">' +
+              '<button type="button" data-cancel class="' + window.UI.OUTLINE_BTN + ' flex-1">Batal</button>' +
+              '<button type="submit" class="' + window.UI.PRIMARY_BTN + ' flex-1">' + (existing ? 'Simpan Perubahan' : 'Terbitkan') + '</button>' +
+            '</div>' +
+          '</form>';
+
+        const modal = window.UI.openModal(existing ? 'Ubah Pengumuman' : 'Publikasikan Pengumuman', bodyHTML, { maxWidth: 'max-w-lg' });
+        const formEl = modal.querySelector('#form-ann');
+        modal.querySelector('[data-cancel]').addEventListener('click', window.UI.closeModal);
+
+        // Pilih prioritas
+        let selectedPrio = prioritas;
+        modal.querySelectorAll('[data-prio]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            selectedPrio = btn.getAttribute('data-prio');
+            formEl.elements.prioritas.value = selectedPrio;
+            modal.querySelectorAll('[data-prio]').forEach(function (b) {
+              const act = b.getAttribute('data-prio') === selectedPrio;
+              b.className = 'flex-1 rounded-full px-4 py-2 text-[11px] font-bold transition-all active:scale-95 ' +
+                (act ? 'bg-brand-coral text-white shadow-md' : 'border border-slate-200 text-brand-muted hover:text-brand-slate');
+            });
+          });
+        });
+
+        formEl.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const fd = new FormData(formEl);
+          const data = Object.fromEntries(fd.entries());
+          try {
+            window.RT.saveAnnouncement(id, data);
+            window.UI.toast(existing ? 'Pengumuman berhasil diubah' : 'Pengumuman berhasil dipublikasikan', 'success');
+            window.UI.closeModal();
+            render();
+          } catch (err) {
+            window.UI.toast(err.message, 'error');
+          }
+        });
+
+        window.UI.icons();
+      }
+
+      const btnCreate = document.getElementById('btn-create-ann');
+      if (btnCreate) {
+        btnCreate.addEventListener('click', function () { openFormModal(null); });
+      }
+
+      render();
+    }
+  </script>
+</body>
+</html>

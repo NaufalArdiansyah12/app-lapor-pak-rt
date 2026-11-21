@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar — Lapor Pak RT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#FF6B57',
+              'coral-hover': '#E05643',
+              'coral-light': '#FFF0ED',
+              teal: '#4EBA9F',
+              slate: '#1E293B',
+              muted: '#64748B',
+              canvas: '#D5DDE5'
+            }
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          boxShadow: { 'glow-coral': '0 8px 24px -4px rgba(255, 107, 87, 0.35)' }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+  </style>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-brand-canvas p-4 text-brand-slate">
+
+  <div class="w-full max-w-lg rounded-[36px] border border-slate-200/90 bg-white p-8 shadow-2xl sm:p-10">
+    <div class="mb-8 flex items-center gap-2.5">
+      <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-coral-light">
+        <i data-lucide="megaphone" class="h-5 w-5 text-brand-coral" stroke-width="2.5"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-extrabold leading-tight text-brand-slate">Daftar Akun Warga</h1>
+        <p class="text-xs font-medium text-brand-muted">Lapor Pak RT — RT 05 / RW 03</p>
+      </div>
+    </div>
+
+    <form id="form-register" class="space-y-3.5">
+      <div>
+        <label class="mb-1.5 block text-[11px] font-bold text-slate-700">Nama Lengkap</label>
+        <input name="nama_lengkap" type="text" required placeholder="Sesuai KTP"
+          class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-[11px] font-bold text-slate-700">NIK (16 digit)</label>
+        <input name="nik" type="text" required maxlength="16" placeholder="3201000000000000"
+          class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-[11px] font-bold text-slate-700">Email</label>
+        <input name="email" type="email" required placeholder="nama@email.com"
+          class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-[11px] font-bold text-slate-700">No. HP / WhatsApp</label>
+        <input name="no_telepon" type="tel" required placeholder="0812xxxxxxx"
+          class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-[11px] font-bold text-slate-700">Kata Sandi (min. 8 karakter)</label>
+        <input name="password" type="password" required minlength="8" placeholder="••••••••"
+          class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-[11px] font-bold text-slate-700">Alamat Rumah</label>
+        <textarea name="alamat" required rows="2" placeholder="Jl. Melati No. … RT 05 RW 03 …"
+          class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 focus:border-sky-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20"></textarea>
+      </div>
+
+      <div id="reg-error" class="hidden rounded-2xl bg-rose-50 px-4 py-2.5 text-[11px] font-semibold text-rose-600"></div>
+
+      <button type="submit"
+        class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-500 px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-sky-200 transition-all hover:bg-sky-600 active:scale-95 disabled:opacity-60">
+        Buat Akun
+      </button>
+    </form>
+
+    <p class="mt-4 text-center text-[11px] font-medium text-slate-400">
+      Sudah punya akun? <a href="login.html" class="font-bold text-sky-600 hover:underline">Masuk di sini</a>
+    </p>
+  </div>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script>
+    if (window.RT.sessionUser()) {
+      window.location.replace('index.html');
+    }
+
+    const form = document.getElementById('form-register');
+    const errBox = document.getElementById('reg-error');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errBox.classList.add('hidden');
+      const fd = new FormData(form);
+      const data = Object.fromEntries(fd.entries());
+      try {
+        const msg = window.RT.register(data);
+        window.UI.toast(msg, 'success');
+        setTimeout(function () { window.location.replace('login.html'); }, 400);
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.classList.remove('hidden');
+      }
+    });
+
+    window.UI.icons();
+  </script>
+</body>
+</html>

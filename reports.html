@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaduan — Lapor Pak RT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#FF6B57',
+              'coral-hover': '#E05643',
+              'coral-light': '#FFF0ED',
+              teal: '#4EBA9F',
+              'teal-dark': '#3DA087',
+              'teal-light': '#EBF8F5',
+              amber: '#FBBF24',
+              'amber-dark': '#B45309',
+              'amber-light': '#FEF9C3',
+              slate: '#1E293B',
+              muted: '#64748B',
+              canvas: '#D5DDE5'
+            }
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          boxShadow: {
+            'glow-coral': '0 8px 24px -4px rgba(255, 107, 87, 0.35)',
+            'glow-teal': '0 8px 24px -4px rgba(78, 186, 159, 0.35)',
+            'tactile': '0 12px 36px -8px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @view-transition { navigation: auto; }
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    #app:not([data-ready="true"]) { opacity: 0; visibility: hidden; }
+    #app[data-ready="true"] { opacity: 1; visibility: visible; transition: opacity 0.16s ease-out; }
+  </style>
+</head>
+<body class="bg-white text-brand-slate">
+
+  <div id="app">
+    <!-- Header Halaman -->
+    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <div>
+        <h1 id="page-title" class="text-xl font-extrabold tracking-tight text-brand-slate sm:text-2xl">Pengaduan Saya</h1>
+        <p id="page-subtitle" class="text-xs font-medium text-brand-muted">Pantau tiket aduan Anda dari Diajukan hingga Selesai.</p>
+      </div>
+      <div id="action-bar">
+        <button id="btn-create" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-sky-500 px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-sky-200 transition-all hover:bg-sky-600 active:scale-95">
+          <i data-lucide="plus" class="h-4 w-4" stroke-width="2.6"></i>
+          <span>Laporkan Aduan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pencarian & Filter Kategori -->
+    <section class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div class="relative w-full sm:w-80 md:w-96">
+        <input id="search-q" type="text" placeholder="Cari judul, isi, atau kode tiket…"
+          class="w-full rounded-full border border-slate-200/80 bg-white px-5 py-2.5 text-xs font-semibold text-slate-800 shadow-sm transition-all placeholder:font-medium placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500/50">
+        <i data-lucide="search" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" stroke-width="2.5"></i>
+      </div>
+
+      <select id="filter-cat"
+        class="rounded-full border border-slate-200/80 bg-white px-4 py-2.5 text-xs font-bold text-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500/50">
+        <option value="all">Semua Kategori</option>
+      </select>
+    </section>
+
+    <!-- Chips Filter Status -->
+    <div id="status-chips" class="flex flex-wrap items-center gap-2">
+      <button type="button" data-status="all" class="chip-status rounded-full px-4 py-1.5 text-[11px] font-bold transition-all active:scale-95 bg-slate-900 text-white shadow-sm">Semua</button>
+      <button type="button" data-status="pending" class="chip-status rounded-full border border-slate-200/80 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900 active:scale-95">Diajukan</button>
+      <button type="button" data-status="diproses" class="chip-status rounded-full border border-slate-200/80 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900 active:scale-95">Diproses</button>
+      <button type="button" data-status="selesai" class="chip-status rounded-full border border-slate-200/80 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900 active:scale-95">Selesai</button>
+      <button type="button" data-status="ditolak" class="chip-status rounded-full border border-slate-200/80 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900 active:scale-95">Ditolak</button>
+    </div>
+
+    <!-- Grid Kartu Laporan -->
+    <div id="reports-grid" class="grid grid-cols-1 gap-4 md:grid-cols-2"></div>
+  </div>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    const user = window.Layout.init();
+    if (user) {
+      const isOfficer = window.RT.isOfficerRole(user.role);
+
+      // Sesuaikan judul per peran
+      if (isOfficer) {
+        document.getElementById('page-title').textContent = 'Kelola Pengaduan Warga';
+        document.getElementById('page-subtitle').textContent = 'Semua aduan RT 05 / RW 03, ubah status & beri tanggapan.';
+      }
+
+      // Kategori dropdown
+      const catSelect = document.getElementById('filter-cat');
+      const cats = window.RT.listCategories();
+      cats.forEach(function (c) {
+        const opt = document.createElement('option');
+        opt.value = c.id_kategori;
+        opt.textContent = c.nama_kategori;
+        catSelect.appendChild(opt);
+      });
+
+      // Filter state
+      const urlParams = new URLSearchParams(window.location.search);
+      let currentStatus = urlParams.get('status') || 'all';
+      let currentCat = 'all';
+      let currentQ = '';
+
+      // Terapkan chip awal
+      function syncChipUI() {
+        document.querySelectorAll('.chip-status').forEach(function (btn) {
+          const st = btn.getAttribute('data-status');
+          if (st === currentStatus) {
+            btn.className = 'chip-status rounded-full px-4 py-1.5 text-[11px] font-bold transition-all active:scale-95 bg-slate-900 text-white shadow-sm';
+          } else {
+            btn.className = 'chip-status rounded-full border border-slate-200/80 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900 active:scale-95';
+          }
+        });
+      }
+      syncChipUI();
+
+      // Render daftar laporan
+      function renderReports() {
+        const list = window.RT.listReports({ status: currentStatus, id_kategori: currentCat, q: currentQ });
+        const grid = document.getElementById('reports-grid');
+
+        if (list.length === 0) {
+          grid.className = 'grid grid-cols-1';
+          grid.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-3xl border border-slate-100 py-12 text-center">' +
+              '<div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">' +
+                '<i data-lucide="inbox" class="h-6 w-6"></i>' +
+              '</div>' +
+              '<p class="text-xs font-bold text-slate-800">Tidak ada pengaduan ditemukan</p>' +
+              '<p class="mt-1 text-[11px] font-medium text-slate-400">Coba ubah filter status / kata kunci atau laporkan kendala baru.</p>' +
+            '</div>';
+        } else {
+          grid.className = 'grid grid-cols-1 gap-4 md:grid-cols-2';
+          grid.innerHTML = list.map(function (r) {
+            return (
+              '<button type="button" data-id="' + r.id_laporan + '" class="card-report flex flex-col justify-between rounded-3xl border border-slate-100/90 bg-white p-5 text-left shadow-sm transition-all hover:border-sky-300 hover:shadow-md">' +
+                '<div>' +
+                  '<div class="mb-2 flex items-center justify-between gap-2">' +
+                    '<span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">' + window.UI.esc(r.kode_tiket) + '</span>' +
+                    window.UI.statusBadge(r.status) +
+                  '</div>' +
+                  '<p class="line-clamp-1 text-sm font-bold text-slate-900">' + window.UI.esc(r.judul_laporan) + '</p>' +
+                  '<p class="mt-1 line-clamp-2 text-[11px] font-medium leading-relaxed text-slate-400">' + window.UI.esc(r.isi_laporan) + '</p>' +
+                '</div>' +
+                '<div class="mt-3 flex items-center justify-between border-t border-slate-50 pt-3">' +
+                  '<div class="flex items-center gap-3 text-[10px] font-semibold text-slate-400">' +
+                    '<span class="inline-flex items-center gap-1"><i data-lucide="tag" class="h-3 w-3 text-slate-400"></i> ' + window.UI.esc(r.nama_kategori) + '</span>' +
+                    (isOfficer ? '<span class="text-slate-700 font-bold">' + window.UI.esc(r.nama_pelapor) + '</span>' : '') +
+                    '<span class="inline-flex items-center gap-1"><i data-lucide="camera" class="h-3 w-3 ' + (r.foto ? 'text-sky-500' : 'text-slate-300') + '"></i>' + (r.foto ? 'Foto' : 'Tanpa foto') + '</span>' +
+                  '</div>' +
+                  '<span class="text-[10px] font-bold text-sky-600">' +
+                    (r.jumlah_tanggapan ? r.jumlah_tanggapan + ' tanggapan' : '') +
+                  '</span>' +
+                '</div>' +
+              '</button>'
+            );
+          }).join('');
+
+          // Bind klik detail
+          grid.querySelectorAll('.card-report').forEach(function (card) {
+            card.addEventListener('click', function () {
+              openDetail(card.getAttribute('data-id'));
+            });
+          });
+        }
+        window.UI.icons();
+      }
+
+      // Event filter
+      document.querySelectorAll('.chip-status').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          currentStatus = btn.getAttribute('data-status');
+          syncChipUI();
+          renderReports();
+        });
+      });
+
+      catSelect.addEventListener('change', function () {
+        currentCat = catSelect.value;
+        renderReports();
+      });
+
+      const searchInput = document.getElementById('search-q');
+      let searchTimer;
+      searchInput.addEventListener('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+          currentQ = searchInput.value.trim();
+          renderReports();
+        }, 250);
+      });
+
+      // MODAL DETAIL LAPORAN
+      function openDetail(id) {
+        try {
+          const d = window.RT.getReport(id);
+          const bodyHTML =
+            '<div class="space-y-4">' +
+              '<div class="flex flex-wrap items-center justify-between gap-2">' +
+                '<div>' +
+                  '<p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">' + window.UI.esc(d.kode_tiket) + '</p>' +
+                  '<h4 class="text-base font-extrabold text-brand-slate">' + window.UI.esc(d.judul_laporan) + '</h4>' +
+                '</div>' +
+                window.UI.statusBadge(d.status) +
+              '</div>' +
+
+              '<div class="grid grid-cols-2 gap-x-4 gap-y-2 rounded-2xl bg-slate-50/70 p-4 text-[11px] font-semibold sm:grid-cols-3">' +
+                '<div><p class="font-extrabold text-brand-slate">' + window.UI.esc(d.nama_kategori) + '</p><p class="text-slate-400">Kategori</p></div>' +
+                '<div><p class="text-brand-slate">' + window.UI.esc(d.nama_pelapor) + '</p><p class="text-slate-400">Pelapor</p></div>' +
+                '<div><p class="text-brand-slate">' + window.UI.fmtDate(d.tgl_kejadian) + '</p><p class="text-slate-400">Tgl Kejadian</p></div>' +
+                '<div class="col-span-2 sm:col-span-3">' +
+                  '<p class="text-brand-slate"><i data-lucide="map-pin" class="mr-1 inline h-3 w-3 text-brand-coral"></i>' + window.UI.esc(d.lokasi || 'Tidak dicantumkan') + '</p>' +
+                  '<p class="text-slate-400">Lokasi</p>' +
+                '</div>' +
+              '</div>' +
+
+              '<p class="whitespace-pre-line text-xs font-medium leading-relaxed text-brand-slate">' + window.UI.esc(d.isi_laporan) + '</p>' +
+
+              (d.foto ? '<div class="overflow-hidden rounded-2xl border border-slate-100 shadow-sm"><img src="' + d.foto + '" alt="Bukti Foto" class="max-h-72 w-full object-cover"></div>' : '') +
+
+              // Kontrol Pengurus RT (Ubah status & tanggapan)
+              (isOfficer ? (
+                '<div class="rounded-3xl border border-slate-100 p-4">' +
+                  '<p class="mb-2 text-[11px] font-extrabold text-brand-slate">Tindak Lanjut Pengurus RT</p>' +
+                  '<div class="mb-3 flex flex-wrap gap-2">' +
+                    ['pending', 'diproses', 'selesai', 'ditolak'].map(function (st) {
+                      const m = window.UI.STATUS_META[st];
+                      const active = d.status === st;
+                      return (
+                        '<button type="button" data-change-status="' + st + '" class="rounded-full px-3.5 py-1.5 text-[10px] font-bold transition-all active:scale-95 ' +
+                          (active ? m.cls + ' ring-2 ring-slate-300' : 'border border-slate-200 text-brand-muted hover:border-brand-coral hover:text-brand-coral') + '">' +
+                          m.label +
+                        '</button>'
+                      );
+                    }).join('') +
+                  '</div>' +
+                  '<form id="form-response" class="flex gap-2">' +
+                    '<input name="isi_tanggapan" placeholder="Tulis tindakan / tanggapan Pak RT…" required class="' + window.UI.INPUT_CLS + ' flex-1">' +
+                    '<button type="submit" class="' + window.UI.PRIMARY_BTN + '">' +
+                      '<i data-lucide="message-square-plus" class="h-4 w-4"></i> Kirim' +
+                    '</button>' +
+                  '</form>' +
+                '</div>'
+              ) : '') +
+
+              // Riwayat Tanggapan
+              '<div>' +
+                '<p class="mb-2 text-[11px] font-extrabold text-brand-slate">Riwayat Tanggapan (' + d.responses.length + ')</p>' +
+                '<div id="response-list" class="space-y-2.5">' +
+                  (d.responses.length === 0
+                    ? '<p class="rounded-2xl bg-slate-50 p-3.5 text-[11px] font-medium text-brand-muted">Belum ada tanggapan. ' + (isOfficer ? 'Beri balasan di atas.' : 'Pak RT akan segera memproses.') + '</p>'
+                    : d.responses.map(function (t) {
+                        return (
+                          '<div class="rounded-2xl bg-brand-teal-light/60 p-3.5">' +
+                            '<div class="mb-1 flex items-center justify-between">' +
+                              '<p class="text-[11px] font-extrabold text-brand-teal-dark">' + window.UI.esc(t.nama_petugas) + '</p>' +
+                              '<span class="text-[10px] font-semibold text-slate-400">' + window.UI.fmtDateTime(t.tgl_tanggapan) + '</span>' +
+                            '</div>' +
+                            '<p class="text-xs font-medium leading-relaxed text-brand-slate">' + window.UI.esc(t.isi_tanggapan) + '</p>' +
+                          '</div>'
+                        );
+                      }).join('')
+                  ) +
+                '</div>' +
+              '</div>' +
+
+              // Tombol Hapus Laporan
+              '<div class="flex justify-end pt-2">' +
+                '<button id="btn-delete-report" type="button" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-brand-coral hover:underline">' +
+                  '<i data-lucide="trash-2" class="h-3.5 w-3.5"></i> Hapus Laporan' +
+                '</button>' +
+              '</div>' +
+            '</div>';
+
+          const modal = window.UI.openModal('Detail Pengaduan', bodyHTML, { maxWidth: 'max-w-2xl' });
+
+          // Event status change
+          modal.querySelectorAll('[data-change-status]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              const newSt = btn.getAttribute('data-change-status');
+              window.RT.setReportStatus(d.id_laporan, newSt);
+              window.UI.toast('Status diubah jadi "' + window.UI.STATUS_META[newSt].label + '"', 'success');
+              window.UI.closeModal();
+              renderReports();
+            });
+          });
+
+          // Event response form
+          const respForm = modal.querySelector('#form-response');
+          if (respForm) {
+            respForm.addEventListener('submit', function (e) {
+              e.preventDefault();
+              const isi = respForm.elements.isi_tanggapan.value;
+              window.RT.addResponse(d.id_laporan, isi);
+              window.UI.toast('Tanggapan berhasil dikirim', 'success');
+              window.UI.closeModal();
+              renderReports();
+            });
+          }
+
+          // Event delete
+          const btnDel = modal.querySelector('#btn-delete-report');
+          if (btnDel) {
+            btnDel.addEventListener('click', function () {
+              if (confirm('Yakin hapus aduan ' + d.kode_tiket + '?')) {
+                window.RT.deleteReport(d.id_laporan);
+                window.UI.toast('Laporan berhasil dihapus', 'info');
+                window.UI.closeModal();
+                renderReports();
+              }
+            });
+          }
+
+          window.UI.icons();
+        } catch (err) {
+          window.UI.toast(err.message, 'error');
+        }
+      }
+
+      // MODAL BUAT LAPORAN
+      function openCreateModal() {
+        const catOptions = cats.map(function (c) {
+          return '<option value="' + c.id_kategori + '">' + window.UI.esc(c.nama_kategori) + '</option>';
+        }).join('');
+
+        const today = new Date().toISOString().slice(0, 10);
+        const formHTML =
+          '<form id="form-create-report" class="space-y-3.5">' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Kategori Kendala</label>' +
+              '<select name="id_kategori" required class="' + window.UI.INPUT_CLS + '">' +
+                '<option value="">— Pilih kategori —</option>' + catOptions +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Judul Kejadian</label>' +
+              '<input name="judul_laporan" required placeholder="mis. Jalan berlubang di depan rumah" class="' + window.UI.INPUT_CLS + '">' +
+            '</div>' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Kronologi / Rincian</label>' +
+              '<textarea name="isi_laporan" required rows="3" placeholder="Ceritakan kronologi kejadian selengkap mungkin…" class="' + window.UI.INPUT_CLS + '"></textarea>' +
+            '</div>' +
+            '<div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2">' +
+              '<div>' +
+                '<label class="' + window.UI.LABEL_CLS + '"><i data-lucide="map-pin" class="mr-1 inline h-3 w-3"></i> Titik Lokasi</label>' +
+                '<input name="lokasi" placeholder="mis. Depan rumah No. 8" class="' + window.UI.INPUT_CLS + '">' +
+              '</div>' +
+              '<div>' +
+                '<label class="' + window.UI.LABEL_CLS + '"><i data-lucide="calendar" class="mr-1 inline h-3 w-3"></i> Tanggal Kejadian</label>' +
+                '<input name="tgl_kejadian" type="date" required value="' + today + '" max="' + today + '" class="' + window.UI.INPUT_CLS + '">' +
+              '</div>' +
+            '</div>' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '"><i data-lucide="camera" class="mr-1 inline h-3 w-3"></i> Foto Bukti (opsional)</label>' +
+              '<input id="file-foto" type="file" accept="image/*" class="w-full rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-3 text-[11px] font-semibold text-brand-muted file:mr-3 file:rounded-full file:border-0 file:bg-brand-coral-light file:px-3 file:py-1.5 file:text-[10px] file:font-bold file:text-brand-coral">' +
+            '</div>' +
+            '<div class="flex gap-2 pt-2">' +
+              '<button type="button" data-cancel class="' + window.UI.OUTLINE_BTN + ' flex-1">Batal</button>' +
+              '<button type="submit" class="' + window.UI.PRIMARY_BTN + ' flex-1">Kirim Aduan</button>' +
+            '</div>' +
+            '<p class="text-center text-[10px] font-medium text-brand-muted">Aduan Anda terekam sebagai tiket digital digital LPR-xxxxxx.</p>' +
+          '</form>';
+
+        const modal = window.UI.openModal('Laporkan Aduan Baru', formHTML, { maxWidth: 'max-w-lg' });
+        const formEl = modal.querySelector('#form-create-report');
+
+        modal.querySelector('[data-cancel]').addEventListener('click', window.UI.closeModal);
+
+        formEl.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const fd = new FormData(formEl);
+          const fields = Object.fromEntries(fd.entries());
+          const fileInput = modal.querySelector('#file-foto');
+          const file = fileInput.files && fileInput.files[0];
+
+          function send(dataURL) {
+            try {
+              const rep = window.RT.createReport(fields, dataURL);
+              window.UI.toast('Aduan terkirim! Kode: ' + rep.kode_tiket, 'success');
+              window.UI.closeModal();
+              currentStatus = 'all';
+              syncChipUI();
+              renderReports();
+            } catch (err) {
+              window.UI.toast(err.message, 'error');
+            }
+          }
+
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function () { send(reader.result); };
+            reader.onerror = function () { send(null); };
+            reader.readAsDataURL(file);
+          } else {
+            send(null);
+          }
+        });
+
+        window.UI.icons();
+      }
+
+      document.getElementById('btn-create').addEventListener('click', openCreateModal);
+
+      // Trigger modal dari URL param
+      if (urlParams.get('new') === '1') {
+        openCreateModal();
+      } else if (urlParams.get('id')) {
+        openDetail(urlParams.get('id'));
+      }
+
+      renderReports();
+    }
+  </script>
+</body>
+</html>

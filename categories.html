@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kategori Laporan — Lapor Pak RT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#FF6B57',
+              'coral-hover': '#E05643',
+              'coral-light': '#FFF0ED',
+              teal: '#4EBA9F',
+              'teal-dark': '#3DA087',
+              'teal-light': '#EBF8F5',
+              amber: '#FBBF24',
+              slate: '#1E293B',
+              muted: '#64748B',
+              canvas: '#D5DDE5'
+            }
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          boxShadow: {
+            'glow-coral': '0 8px 24px -4px rgba(255, 107, 87, 0.35)',
+            'tactile': '0 12px 36px -8px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @view-transition { navigation: auto; }
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+    #app:not([data-ready="true"]) { opacity: 0; visibility: hidden; }
+    #app[data-ready="true"] { opacity: 1; visibility: visible; transition: opacity 0.16s ease-out; }
+  </style>
+</head>
+<body class="bg-white text-brand-slate">
+
+  <div id="app">
+    <!-- Header Halaman -->
+    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <div>
+        <h1 class="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">Kategori Laporan</h1>
+        <p class="text-xs font-medium text-slate-400">Klasifikasi aduan warga: Keamanan, Kebersihan, Fasilitas Umum, Jalan & Drainase.</p>
+      </div>
+      <div>
+        <button id="btn-create-cat" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-sky-500 px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-sky-200 transition-all hover:bg-sky-600 active:scale-95">
+          <i data-lucide="plus" class="h-4 w-4" stroke-width="2.6"></i>
+          <span>Tambah Kategori</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid Kartu Kategori -->
+    <div id="cat-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </div>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    const user = window.Layout.init({ officerOnly: true });
+    if (user) {
+      function render() {
+        const list = window.RT.listCategories();
+        const grid = document.getElementById('cat-grid');
+
+        if (list.length === 0) {
+          grid.className = 'grid grid-cols-1';
+          grid.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-3xl border border-slate-100 py-12 text-center">' +
+              '<p class="text-xs font-bold text-brand-slate">Belum ada kategori laporan</p>' +
+              '<p class="mt-1 text-[11px] font-medium text-brand-muted">Tambahkan kategori pertama lewat tombol di atas.</p>' +
+            '</div>';
+          return;
+        }
+
+        grid.className = 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3';
+        grid.innerHTML = list.map(function (c) {
+          return (
+            '<div class="group flex flex-col justify-between rounded-3xl border border-slate-100/90 bg-white p-5 shadow-sm transition-all hover:shadow-md">' +
+              '<div>' +
+                '<div class="mb-3 flex items-center justify-between">' +
+                  '<span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-50 text-sky-600">' +
+                    '<i data-lucide="tags" class="h-4 w-4" stroke-width="2.2"></i>' +
+                  '</span>' +
+                  '<span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-500">' +
+                    c.jumlah_laporan + ' aduan' +
+                  '</span>' +
+                '</div>' +
+                '<h3 class="text-sm font-extrabold text-slate-900">' + window.UI.esc(c.nama_kategori) + '</h3>' +
+                '<p class="mt-1 text-[11px] font-medium leading-relaxed text-slate-400">' + window.UI.esc(c.deskripsi || 'Tanpa deskripsi') + '</p>' +
+              '</div>' +
+              '<div class="mt-4 flex items-center justify-end border-t border-slate-50 pt-3">' +
+                '<span class="flex gap-1">' +
+                  '<button data-edit="' + c.id_kategori + '" aria-label="Ubah" class="rounded-xl p-1.5 text-slate-400 transition-colors hover:text-slate-900 hover:bg-slate-100">' +
+                    '<i data-lucide="pencil" class="h-3.5 w-3.5"></i>' +
+                  '</button>' +
+                  '<button data-delete="' + c.id_kategori + '" aria-label="Hapus" class="rounded-xl p-1.5 text-slate-400 transition-colors hover:text-rose-600 hover:bg-rose-50">' +
+                    '<i data-lucide="trash-2" class="h-3.5 w-3.5"></i>' +
+                  '</button>' +
+                '</span>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        grid.querySelectorAll('[data-edit]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            openFormModal(btn.getAttribute('data-edit'));
+          });
+        });
+        grid.querySelectorAll('[data-delete]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const id = btn.getAttribute('data-delete');
+            const target = window.RT.findCat(Number(id));
+            if (confirm('Hapus kategori "' + (target ? target.nama_kategori : '') + '"?')) {
+              try {
+                window.RT.deleteCategory(id);
+                window.UI.toast('Kategori berhasil dihapus', 'info');
+                render();
+              } catch (err) {
+                window.UI.toast(err.message, 'error');
+              }
+            }
+          });
+        });
+
+        window.UI.icons();
+      }
+
+      function openFormModal(id) {
+        let existing = null;
+        if (id) existing = window.RT.findCat(Number(id));
+
+        const bodyHTML =
+          '<form id="form-cat" class="space-y-3.5">' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Nama Kategori</label>' +
+              '<input name="nama_kategori" required value="' + window.UI.esc(existing ? existing.nama_kategori : '') + '" placeholder="mis. Keamanan" class="' + window.UI.INPUT_CLS + '">' +
+            '</div>' +
+            '<div>' +
+              '<label class="' + window.UI.LABEL_CLS + '">Deskripsi</label>' +
+              '<input name="deskripsi" value="' + window.UI.esc(existing ? (existing.deskripsi || '') : '') + '" placeholder="Singkat, mis. gangguan keamanan atau ronda" class="' + window.UI.INPUT_CLS + '">' +
+            '</div>' +
+            '<div class="flex gap-2 pt-2">' +
+              '<button type="button" data-cancel class="' + window.UI.OUTLINE_BTN + ' flex-1">Batal</button>' +
+              '<button type="submit" class="' + window.UI.PRIMARY_BTN + ' flex-1">' + (existing ? 'Simpan' : 'Tambah') + '</button>' +
+            '</div>' +
+          '</form>';
+
+        const modal = window.UI.openModal(existing ? 'Ubah Kategori' : 'Tambah Kategori', bodyHTML);
+        const formEl = modal.querySelector('#form-cat');
+        modal.querySelector('[data-cancel]').addEventListener('click', window.UI.closeModal);
+
+        formEl.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const fd = new FormData(formEl);
+          const data = Object.fromEntries(fd.entries());
+          try {
+            window.RT.saveCategory(id, data);
+            window.UI.toast(existing ? 'Kategori berhasil diperbarui' : 'Kategori baru berhasil ditambahkan', 'success');
+            window.UI.closeModal();
+            render();
+          } catch (err) {
+            window.UI.toast(err.message, 'error');
+          }
+        });
+
+        window.UI.icons();
+      }
+
+      document.getElementById('btn-create-cat').addEventListener('click', function () {
+        openFormModal(null);
+      });
+
+      render();
+    }
+  </script>
+</body>
+</html>
